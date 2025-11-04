@@ -54,3 +54,36 @@ class LeaveRequest(db.Model):
             'status': self.status,
             'created_at': self.created_at.isoformat()
         }
+    
+#Auth Routes
+
+@app.route('/auth/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    
+    if not data or not data.get('name') or not data.get('email') or not data.get('password'):
+        return jsonify({'error': 'Missing required fields'}), 400
+    
+    if User.query.filter_by(email=data['email']).first():
+        return jsonify({'error': 'Email already registered'}), 400
+    
+    hashed_password = generate_password_hash(data['password'])
+    role = data.get('role', 'employee')
+    
+    if role not in ['admin', 'employee']:
+        role = 'employee'
+    
+    new_user = User(
+        name=data['name'],
+        email=data['email'],
+        password=hashed_password,
+        role=role
+    )
+    
+    db.session.add(new_user)
+    db.session.commit()
+    
+    return jsonify({
+        'message': 'User registered successfully',
+        'user': new_user.to_dict()
+    }), 201
