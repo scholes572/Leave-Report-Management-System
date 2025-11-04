@@ -203,3 +203,23 @@ def update_leave_status(leave_id):
         'message': f'Leave request {status}',
         'leave_request': leave_request.to_dict()
     }), 200
+
+# Initialize database and create default admin
+def init_db():
+    with app.app_context():
+        db.create_all()
+        
+        # Create default admin if not exists
+        admin = User.query.filter_by(email='admin@company.com').first()
+        if not admin:
+            admin = User(
+                name='Admin User',
+                email='admin@company.com',
+                password=generate_password_hash('admin123'),
+                role='admin'
+            )
+            db.session.add(admin)
+            db.session.commit()
+            print('✅ Default admin created: admin@company.com / admin123')
+        else:
+            print('✅ Admin account already exists')
