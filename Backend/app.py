@@ -151,4 +151,23 @@ def create_leave_request():
     return jsonify({
         'message': 'Leave request created successfully',
         'leave_request': new_request.to_dict()
-    }), 201
+    }), 201.
+
+
+@app.route('/leaves', methods=['GET'])
+@jwt_required()
+def get_leave_requests():
+    current_user_id = get_jwt_identity()
+    claims = get_jwt()
+    role = claims.get('role')
+    
+    if role == 'admin':
+        # Admin sees all requests
+        requests = LeaveRequest.query.order_by(LeaveRequest.created_at.desc()).all()
+    else:
+        # Employee sees only their own requests
+        requests = LeaveRequest.query.filter_by(user_id=current_user_id).order_by(LeaveRequest.created_at.desc()).all()
+    
+    return jsonify({
+        'leave_requests': [req.to_dict() for req in requests]
+    }), 200
