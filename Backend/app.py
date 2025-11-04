@@ -111,3 +111,44 @@ def login():
         'access_token': access_token,
         'user': user.to_dict()
     }), 200
+
+# Leave Request Routes
+@app.route('/leaves', methods=['POST'])
+@jwt_required()
+def create_leave_request():
+    current_user_id = get_jwt_identity()
+    data = request.get_json()
+    
+    if not data or not data.get('start_date') or not data.get('end_date') or not data.get('reason'):
+        return jsonify({'error': 'Missing required fields'}), 400
+    
+    if not data['reason'].strip():
+        return jsonify({'error': 'Reason cannot be empty'}), 400
+    
+    try:
+        start_date = datetime.strptime(data['start_date'], '%Y-%m-%d').date()
+        end_date = datetime.strptime(data['end_date'], '%Y-%m-%d').date()
+        
+        if end_date < start_date:
+            return jsonify({'error': 'End date must be after start date'}), 400
+        
+        if start_date < datetime.now().date():
+            return jsonify({'error': 'Start date cannot be in the past'}), 400
+            
+    except ValueError:
+        return jsonify({'error': 'Invalid date format. Use YYYY-MM-DD'}), 400
+    
+    new_request = LeaveRequest(
+        user_id=current_user_id,
+        start_date=start_date,
+        end_date=end_date,
+        reason=data['reason'].strip()
+    )
+    
+    db.session.add(new_request)
+    db.session.commit()
+    
+    return jsonify({
+        'message': 'Leave request created successfully',
+        'leave_request': new_request.to_dict()
+    }), 201
