@@ -264,5 +264,16 @@ const EmployeeDashboard = ({ token }) => {
     setMessage({ type: '', text: '' });
 
 
+    try {
+      const response = await fetch(`${API_URL}/leaves`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(formData)
+      });
+
+
 
 
