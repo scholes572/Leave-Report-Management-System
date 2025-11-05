@@ -25,11 +25,6 @@ CORS(app, resources={
     }
 })
 
-@app.before_request
-def log_request_info():
-    print(f"Request: {request.method} {request.url}")
-    print(f"Origin: {request.headers.get('Origin')}")
-    print(f"Headers: {dict(request.headers)}")
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -72,7 +67,8 @@ class LeaveRequest(db.Model):
 #Auth Routes
 
 @app.route('/auth/register', methods=['POST'])
-def register():
+def register():  
+    #Endpoint 1
     data = request.get_json()
     
     if not data or not data.get('name') or not data.get('email') or not data.get('password'):
@@ -106,6 +102,8 @@ def register():
 
 @app.route('/auth/login', methods=['POST'])
 def login():
+    #Endpoint 2
+    
     data = request.get_json()
     
     if not data or not data.get('email') or not data.get('password'):
