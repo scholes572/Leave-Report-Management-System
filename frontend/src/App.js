@@ -254,3 +254,11 @@ const EmployeeDashboard = ({ token }) => {
   };
 
 
+  const handleSubmit = async () => {
+    if (!formData.start_date || !formData.end_date || !formData.reason.trim()) {
+      setMessage({ type: 'error', text: 'Please fill in all fields' });
+      return;
+    }
+
+
+
