@@ -260,5 +260,9 @@ const EmployeeDashboard = ({ token }) => {
       return;
     }
 
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+
+
 
 
