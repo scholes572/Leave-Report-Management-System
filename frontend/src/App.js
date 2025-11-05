@@ -372,6 +372,45 @@ const EmployeeDashboard = ({ token }) => {
         </div>
       </div>
 
+       <div>
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">My Leave Requests</h2>
+
+          {leaves.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              <Calendar className="w-12 h-12 mx-auto mb-3 opacity-50" />
+              <p>No leave requests yet</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {leaves.map((leave) => (
+                <div key={leave.id} className="border border-gray-200 rounded-lg p-4">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <div className="font-medium text-gray-900">
+                        {new Date(leave.start_date).toLocaleDateString()} - {new Date(leave.end_date).toLocaleDateString()}
+                      </div>
+                      <div className="text-sm text-gray-500 mt-1">
+                        Submitted on {new Date(leave.created_at).toLocaleDateString()}
+                      </div>
+                    </div>
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${getStatusColor(leave.status)}`}>
+                      {getStatusIcon(leave.status)}
+                      {leave.status.charAt(0).toUpperCase() + leave.status.slice(1)}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-600">{leave.reason}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
 
 
 
