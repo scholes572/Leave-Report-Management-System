@@ -219,7 +219,7 @@ const AuthPages = ({ setToken, setUser }) => {
           {isLogin && (
           <div className="mt-4 p-3 bg-gray-50 rounded-lg text-xs text-gray-600">
             <strong>Default Admin Credentials:</strong><br />
-            Admin: agostinoscholes572@gmail.com / Scholes2006
+            Admin: agostinoscholes572@gmail.com     Password : Scholes2006
           </div>
         )}
       </div>
