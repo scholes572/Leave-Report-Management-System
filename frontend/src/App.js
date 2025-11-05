@@ -300,5 +300,15 @@ const EmployeeDashboard = ({ token }) => {
   };
 
 
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'approved': return <CheckCircle className="w-4 h-4" />;
+      case 'rejected': return <AlertCircle className="w-4 h-4" />;
+      default: return <Clock className="w-4 h-4" />;
+    }
+  };
+
+
+
 
 
