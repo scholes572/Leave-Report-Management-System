@@ -464,4 +464,101 @@ const AdminDashboard = ({ token }) => {
     approved: leaves.filter(l => l.status === 'approved').length,
     rejected: leaves.filter(l => l.status === 'rejected').length
   };
+  return (
+    <div>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="bg-white rounded-lg shadow-sm p-4">
+          <div className="text-sm text-gray-600 mb-1">Total Requests</div>
+          <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
+        </div>
+        <div className="bg-yellow-50 rounded-lg shadow-sm p-4">
+          <div className="text-sm text-yellow-700 mb-1">Pending</div>
+          <div className="text-2xl font-bold text-yellow-900">{stats.pending}</div>
+        </div>
+        <div className="bg-green-50 rounded-lg shadow-sm p-4">
+          <div className="text-sm text-green-700 mb-1">Approved</div>
+          <div className="text-2xl font-bold text-green-900">{stats.approved}</div>
+        </div>
+        <div className="bg-red-50 rounded-lg shadow-sm p-4">
+          <div className="text-sm text-red-700 mb-1">Rejected</div>
+          <div className="text-2xl font-bold text-red-900">{stats.rejected}</div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-sm p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold text-gray-900">All Leave Requests</h2>
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="all">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+
+        {loading ? (
+          <div className="text-center py-12 text-gray-500">Loading...</div>
+        ) : filteredLeaves.length === 0 ? (
+          <div className="text-center py-12 text-gray-500">
+            <Calendar className="w-12 h-12 mx-auto mb-3 opacity-50" />
+            <p>No leave requests found</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {filteredLeaves.map((leave) => (
+              <div key={leave.id} className="border border-gray-200 rounded-lg p-4">
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="font-semibold text-gray-900">{leave.user_name}</span>
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        leave.status === 'approved' ? 'bg-green-100 text-green-700' :
+                        leave.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                        'bg-yellow-100 text-yellow-700'
+                      }`}>
+                        {leave.status.charAt(0).toUpperCase() + leave.status.slice(1)}
+                      </span>
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      <strong>Period:</strong> {new Date(leave.start_date).toLocaleDateString()} - {new Date(leave.end_date).toLocaleDateString()}
+                    </div>
+                    <div className="text-sm text-gray-600 mt-1">
+                      <strong>Submitted:</strong> {new Date(leave.created_at).toLocaleDateString()}
+                    </div>
+                    <div className="text-sm text-gray-700 mt-2">
+                      <strong>Reason:</strong> {leave.reason}
+                    </div>
+                  </div>
+                  
+                  {leave.status === 'pending' && (
+                    <div className="flex gap-2 ml-4">
+                      <button
+                        onClick={() => updateStatus(leave.id, 'approved')}
+                        className="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition font-medium"
+                      >
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => updateStatus(leave.id, 'rejected')}
+                        className="px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition font-medium"
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default App;
 
