@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, get_jwt
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash , check_password_hash
 from datetime import datetime, timedelta
@@ -15,7 +15,21 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
 
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
-CORS(app)
+
+CORS(app, resources={
+    r"/*": {
+        "origins": ["http://localhost:3000", "http://localhost:3001"],
+        "methods": ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "supports_credentials": True
+    }
+})
+
+@app.before_request
+def log_request_info():
+    print(f"Request: {request.method} {request.url}")
+    print(f"Origin: {request.headers.get('Origin')}")
+    print(f"Headers: {dict(request.headers)}")
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -151,7 +165,7 @@ def create_leave_request():
     return jsonify({
         'message': 'Leave request created successfully',
         'leave_request': new_request.to_dict()
-    }), 201.
+    }), 201
 
 
 @app.route('/leaves', methods=['GET'])
